@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
@@ -69,7 +71,25 @@ public class RobotContainer {
 
     m_driverController.x().whileTrue(new DriveToPoint(m_robotDrive, 0, 0, 0));
 
+    m_driverController.y().whileTrue(new DriveToPoint(m_robotDrive, 1, 0, 90));
+
     m_driverController.leftBumper().onTrue(
+    new SequentialCommandGroup(
+        new WaitCommand(5),
+          new InstantCommand(() -> {
+
+            Pose visionPose = m_limelight.getPoseFromTag(
+                m_robotDrive.getPoseContinuous().getAngle()
+            );
+
+            if (visionPose != null) {
+                m_robotDrive.resetOdometry(visionPose);
+            }
+
+        }, m_robotDrive),
+        new WaitCommand(5),
+        new DriveToPoint(m_robotDrive, -2, 0, 0),
+        new WaitCommand(5),
         new InstantCommand(() -> {
 
             Pose visionPose = m_limelight.getPoseFromTag(
@@ -80,7 +100,11 @@ public class RobotContainer {
                 m_robotDrive.resetOdometry(visionPose);
             }
 
-        }, m_robotDrive)
+        }, m_robotDrive),
+        new DriveToPoint(m_robotDrive, -3, 0, 90)
+    )    
+    
+
     );
 
   }

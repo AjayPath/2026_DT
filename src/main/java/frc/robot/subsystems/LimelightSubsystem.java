@@ -20,10 +20,11 @@ public class LimelightSubsystem extends SubsystemBase {
   // Example: fill with your measured mapping
   // ty (deg), distance (m)
   private static final double[][] TY_DISTANCE_TABLE = {
-    {20.0, 0.864},
-    {13, 1.27},
-    {6.67, 1.86},
-    {3.0, 2.26},
+    {21.22, 1.4986},
+    {16.33, 1.8542},
+    {13.7, 2.0955},
+    {9.95, 2.5019},
+    {4.85, 3.3274},
   };
 
   public double getDistanceMeters() {
@@ -69,6 +70,11 @@ public class LimelightSubsystem extends SubsystemBase {
   public boolean isTagAllowedForRotation() {
     int id = (int) Math.round(getTID());
     return id == 2 || id == 5 || id == 10;
+  }
+
+  public boolean isPoseResetAllowed() {
+    int id = (int) Math.round(getTID());
+    return id == 1;
   }
 
   public Pose getPoseFromTag(double robotYawDeg) {
